@@ -26,7 +26,9 @@ import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,7 +40,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 
-public class MainActivity extends ActionBarActivity implements LocationProvider.LocationCallback{
+public class MainActivity extends ActionBarActivity implements LocationProvider.LocationCallback {
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
@@ -46,16 +48,28 @@ public class MainActivity extends ActionBarActivity implements LocationProvider.
     private LocationProvider mLocaitonProvider;
     private Location mLocation;
 
-    @InjectView(R.id.timeLabel) TextView mTimeLabel;
-    @InjectView(R.id.temperatureLabel) TextView mTemperatureLabel;
-    @InjectView(R.id.humidityValue) TextView mHumidityValue;
-    @InjectView(R.id.precipValue) TextView mPrecipValue;
-    @InjectView(R.id.summaryLabel) TextView mSummaryLabel;
-    @InjectView(R.id.iconImageView) ImageView mIconImageView;
-    @InjectView(R.id.refreshImageView) ImageView mRefreshImageView;
-    @InjectView(R.id.locationLabel) TextView mLocationLabel;
-    @InjectView(R.id.progressBar) ProgressBar mProgressBar;
-    @InjectView(R.id.relativeLayout) RelativeLayout mRelativeLayout;
+    @InjectView(R.id.timeLabel)
+    TextView mTimeLabel;
+    @InjectView(R.id.temperatureLabel)
+    TextView mTemperatureLabel;
+    @InjectView(R.id.humidityValue)
+    TextView mHumidityValue;
+    @InjectView(R.id.precipValue)
+    TextView mPrecipValue;
+    @InjectView(R.id.summaryLabel)
+    TextView mSummaryLabel;
+    @InjectView(R.id.iconImageView)
+    ImageView mIconImageView;
+    @InjectView(R.id.refreshImageView)
+    ImageView mRefreshImageView;
+    @InjectView(R.id.locationLabel)
+    TextView mLocationLabel;
+    @InjectView(R.id.progressBar)
+    ProgressBar mProgressBar;
+    @InjectView(R.id.relativeLayout)
+    RelativeLayout mRelativeLayout;
+    @InjectView(R.id.imageView)
+    ImageView mImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +82,7 @@ public class MainActivity extends ActionBarActivity implements LocationProvider.
         Point size = new Point();
         display.getSize(size);
         mRelativeLayout.getLayoutParams().height = size.y + 100;
+        mRelativeLayout.getBackground().setAlpha(150);
 
         mProgressBar.setVisibility(View.INVISIBLE);
 
@@ -87,7 +102,7 @@ public class MainActivity extends ActionBarActivity implements LocationProvider.
     protected void onResume() {
         super.onResume();
         // Get tracker.
-        Tracker t = ((WeatherApplication)this.getApplication()).getTracker(
+        Tracker t = ((WeatherApplication) this.getApplication()).getTracker(
                 WeatherApplication.TrackerName.APP_TRACKER);
 
         // Set screen name.
@@ -110,6 +125,68 @@ public class MainActivity extends ActionBarActivity implements LocationProvider.
         mLocation = location;
         getForecast(mLocation.getLatitude(), mLocation.getLongitude());
     }
+
+    private void getCityImage(double latitude, double longitude) {
+        String apiKey = "28b575d78aabade2e8a5708157bb88c4";
+
+        String searchUrl = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key="
+                + apiKey + "&text=weather&safe_search=1&lat=" + latitude
+                + "&lon=" + longitude + "&in_gallery=true&per_page=1&format=json&nojsoncallback=1";
+
+        if (isNetworkAvailable()) {
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url(searchUrl)
+                    .build();
+            Call call = client.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Request request, IOException e) {
+
+                }
+
+                @Override
+                public void onResponse(Response response) throws IOException {
+                    String jsonData = response.body().string();
+                    Log.v(TAG, jsonData);
+                    try {
+                        JSONObject data = new JSONObject(jsonData);
+                        JSONObject photos = data.getJSONObject("photos");
+                        JSONArray photo = photos.getJSONArray("photo");
+
+                        if (photo.length() > 0) {
+                            JSONObject photoDetail = photo.getJSONObject(0);
+                            String farmId = photoDetail.getString("farm");
+                            String serverId = photoDetail.getString("server");
+                            String photoId = photoDetail.getString("id");
+                            String secret = photoDetail.getString("secret");
+
+                            final String imageUrl = "https://farm" + farmId + ".staticflickr.com/" + serverId + "/"
+                                    + photoId + "_" + secret + ".jpg";
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Picasso.with(MainActivity.this).load(imageUrl).placeholder(R.drawable.weather_place_image).into(mImageView);
+                                }
+                            });
+
+                            Log.d(TAG, data.toString());
+                            Log.d(TAG, photos.toString());
+                            Log.d(TAG, photo.toString());
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            });
+        } else {
+            Toast.makeText(this, getString(R.string.network_unavailable_message), Toast.LENGTH_LONG).show();
+        }
+    }
+
 
     private void getForecast(double latitude, double longitude) {
         String apiKey = "99482bd34c18ea058b28d66f07565980";
@@ -155,22 +232,20 @@ public class MainActivity extends ActionBarActivity implements LocationProvider.
                                 @Override
                                 public void run() {
                                     updateDisplay();
+                                    getCityImage(mLocation.getLatitude(), mLocation.getLongitude());
                                 }
                             });
                         } else {
                             alertUserAboutError();
                         }
-                    }
-                    catch (IOException e) {
+                    } catch (IOException e) {
                         Log.e(TAG, "Exception caught:", e);
-                    }
-                    catch (JSONException e) {
+                    } catch (JSONException e) {
                         Log.e(TAG, "Exception caught:", e);
                     }
                 }
             });
-        }
-        else {
+        } else {
             Toast.makeText(this, getString(R.string.network_unavailable_message), Toast.LENGTH_LONG).show();
         }
     }
