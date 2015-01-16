@@ -127,10 +127,10 @@ public class MainActivity extends ActionBarActivity implements LocationProvider.
     }
 
     private void getCityImage(double latitude, double longitude) {
-        String apiKey = "28b575d78aabade2e8a5708157bb88c4";
+        String apiKey = "7e0e449a9aa98d927b269fa2528215a5";
 
         String searchUrl = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key="
-                + apiKey + "&text=weather&safe_search=1&lat=" + latitude
+                + apiKey + "&text=weather&accuracy=11&safe_search=1&lat=" + latitude
                 + "&lon=" + longitude + "&in_gallery=true&per_page=1&format=json&nojsoncallback=1";
 
         if (isNetworkAvailable()) {
