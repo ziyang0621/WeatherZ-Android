@@ -39,12 +39,27 @@
                 android:paddingTop="@dimen/activity_vertical_margin"
                 tools:context=".MainActivity">
 
+                <ImageView
+                    android:id="@+id/refreshImageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/refresh"/>
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/refreshImageView"
+                    android:layout_centerHorizontal="true"/>
+
                 <TextView
                     android:id="@+id/temperatureLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_below="@+id/timeLabel"
                     android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
                     android:text="--"
                     android:textColor="@android:color/white"
                     android:textSize="150sp"/>
@@ -63,7 +78,7 @@
                     android:id="@+id/timeLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_above="@+id/temperatureLabel"
+                    android:layout_below="@+id/locationLabel"
                     android:layout_centerHorizontal="true"
                     android:text="..."
                     android:textColor="#80ffffff"
@@ -73,10 +88,11 @@
                     android:id="@+id/locationLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_above="@+id/timeLabel"
+                    android:layout_below="@+id/progressBar"
                     android:layout_centerHorizontal="true"
+                    android:layout_marginTop="20dp"
                     android:layout_marginBottom="60dp"
-                    android:text="---"
+                    android:text="--"
                     android:textColor="@android:color/white"
                     android:textSize="24sp"/>
 
@@ -174,21 +190,6 @@
                     android:text="@string/enable_location_text"
                     android:textColor="#80ffffff"
                     android:textSize="16dp"/>
-
-                <ImageView
-                    android:id="@+id/refreshImageView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:src="@drawable/refresh"/>
-
-                <ProgressBar
-                    android:id="@+id/progressBar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/refreshImageView"
-                    android:layout_centerHorizontal="true"/>
 
             </RelativeLayout>
 
