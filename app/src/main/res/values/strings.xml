@@ -12,5 +12,7 @@
     <string name="precip_label_text">RAIN/SHOW?</string>
     <string name="humidity_label_text">HUMIDITY</string>
     <string name="enable_location_text">Make sure the Location is enabled in your device settings.</string>
+    <string name="forecast_api_key">99482bd34c18ea058b28d66f07565980</string>
+    <string name="flickr_api_key">7e0e449a9aa98d927b269fa2528215a5</string>
 
 </resources>

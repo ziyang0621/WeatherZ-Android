@@ -84,7 +84,7 @@ public class MainActivity extends ActionBarActivity implements LocationProvider.
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
 
-        mRelativeLayout.getBackground().setAlpha(120);
+        mRelativeLayout.getBackground().setAlpha(130);
 
         LinearLayoutManager layoutManager  = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -94,7 +94,7 @@ public class MainActivity extends ActionBarActivity implements LocationProvider.
         mDailyList.setAdapter(mDailyWeatherAdapter);
 
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)mDailyList.getLayoutParams();
-        params.height = 8 * getResources().getDimensionPixelSize(R.dimen.dailyweather_list_item_row_height);
+        params.height = WeatherConstants.NUMBER_OF_FUTURE_DAYS * getResources().getDimensionPixelSize(R.dimen.dailyweather_list_item_row_height);
         mDailyList.setLayoutParams(params);
 
         Display display = getWindowManager().getDefaultDisplay();
@@ -146,7 +146,7 @@ public class MainActivity extends ActionBarActivity implements LocationProvider.
     }
 
     private void getCityImage(double latitude, double longitude) {
-        String apiKey = "7e0e449a9aa98d927b269fa2528215a5";
+        String apiKey = getResources().getString(R.string.flickr_api_key);
 
         String searchUrl = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key="
                 + apiKey + "&text=weather&accuracy=11&safe_search=1&lat=" + latitude
@@ -204,7 +204,7 @@ public class MainActivity extends ActionBarActivity implements LocationProvider.
 
 
     private void getForecast(double latitude, double longitude) {
-        String apiKey = "99482bd34c18ea058b28d66f07565980";
+        String apiKey = getResources().getString(R.string.forecast_api_key);
 
         String forecastUrl = "https://api.forecast.io/forecast/" + apiKey +
                 "/" + latitude + "," + longitude;
@@ -299,7 +299,7 @@ public class MainActivity extends ActionBarActivity implements LocationProvider.
 
         Log.d(TAG, "daily data: " + dailyData.toString());
 
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < WeatherConstants.NUMBER_OF_FUTURE_DAYS; i++) {
             JSONObject object = dailyData.getJSONObject(i);
 
             Weather weather = new Weather();
