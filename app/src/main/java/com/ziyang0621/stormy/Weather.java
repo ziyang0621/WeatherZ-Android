@@ -1,5 +1,6 @@
 package com.ziyang0621.stormy;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -7,15 +8,33 @@ import java.util.TimeZone;
 /**
  * Created by ziyang0621 on 1/12/15.
  */
-public class CurrentWeather {
+public class Weather {
     private String mIcon;
     private long mTime;
     private double mTemperature;
+    private double mTemperatureMin;
+    private double mTemperatureMax;
     private double mHumidity;
     private double mPrecipChance;
     private String mSummary;
     private String mTimeZone;
     private String mPlaceName;
+
+    public int getTemperatureMin() {
+        return(int) Math.round(mTemperatureMin);
+    }
+
+    public void setTemperatureMin(double temperatureMin) {
+        mTemperatureMin = temperatureMin;
+    }
+
+    public int getTemperatureMax() {
+        return(int) Math.round(mTemperatureMax);
+    }
+
+    public void setTemperatureMax(double temperatureMax) {
+        mTemperatureMax = temperatureMax;
+    }
 
     public String getPlaceName() {
         return mPlaceName;
@@ -89,6 +108,14 @@ public class CurrentWeather {
         String timeString = formatter.format(dateTime);
 
         return timeString;
+    }
+
+    public String getDayOfWeek() {
+//        Calendar c = Calendar.getInstance();
+//        c.setTime(new Date(getTime() * 1000));
+//        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+        DateFormat format = new SimpleDateFormat("EEEE");
+        return format.format(new Date(getTime() * 1000));
     }
 
     public void setTime(long time) {
