@@ -38,7 +38,7 @@
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:text="100/100"
+            android:text="100 ~ 100"
             android:textSize="18sp"
             android:textColor="#80ffffff"
             />

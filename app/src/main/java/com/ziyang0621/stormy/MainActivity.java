@@ -49,9 +49,11 @@ public class MainActivity extends ActionBarActivity implements LocationProvider.
 
     private Weather mCurrentWeather;
     private List<Weather> mDailyWeatherList;
+    private List<Weather> mHourlyWeatherList;
     private LocationProvider mLocaitonProvider;
     private Location mLocation;
     private DailyWeatherAdapter mDailyWeatherAdapter;
+    private HourlyWeatherAdapter mHourlyWeatherAdapter;
 
     @InjectView(R.id.timeLabel)
     TextView mTimeLabel;
@@ -75,6 +77,8 @@ public class MainActivity extends ActionBarActivity implements LocationProvider.
     RelativeLayout mRelativeLayout;
     @InjectView(R.id.imageView)
     ImageView mImageView;
+    @InjectView(R.id.hourlyList)
+    RecyclerView mHourList;
     @InjectView(R.id.dailyList)
     RecyclerView mDailyList;
 
@@ -86,13 +90,23 @@ public class MainActivity extends ActionBarActivity implements LocationProvider.
 
         mRelativeLayout.getBackground().setAlpha(130);
 
-        LinearLayoutManager layoutManager  = new LinearLayoutManager(this);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mDailyList.setLayoutManager(layoutManager);
+        //Setup hourly RecyclerView
+        LinearLayoutManager hourLayoutManager = new LinearLayoutManager(this);
+        hourLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        mHourList.setLayoutManager(hourLayoutManager);
+
+        mHourlyWeatherAdapter = new HourlyWeatherAdapter(MainActivity.this, new ArrayList<Weather>());
+        mHourList.setAdapter(mHourlyWeatherAdapter);
+
+        //Setup daily RecyclerView
+        LinearLayoutManager dailyLayoutManager  = new LinearLayoutManager(this);
+        dailyLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mDailyList.setLayoutManager(dailyLayoutManager);
 
         mDailyWeatherAdapter = new DailyWeatherAdapter(MainActivity.this, new ArrayList<Weather>());
         mDailyList.setAdapter(mDailyWeatherAdapter);
 
+        //Set up view height
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)mDailyList.getLayoutParams();
         params.height = WeatherConstants.NUMBER_OF_FUTURE_DAYS * getResources().getDimensionPixelSize(R.dimen.dailyweather_list_item_row_height);
         mDailyList.setLayoutParams(params);
@@ -100,7 +114,8 @@ public class MainActivity extends ActionBarActivity implements LocationProvider.
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        mRelativeLayout.getLayoutParams().height = mRelativeLayout.getLayoutParams().height + mDailyList.getLayoutParams().height;
+        mRelativeLayout.getLayoutParams().height = mRelativeLayout.getLayoutParams().height
+                + mHourList.getLayoutParams().height + mDailyList.getLayoutParams().height;
 
         mProgressBar.setVisibility(View.INVISIBLE);
 
@@ -243,11 +258,13 @@ public class MainActivity extends ActionBarActivity implements LocationProvider.
                         Log.v(TAG, jsonData);
                         if (response.isSuccessful()) {
                             mCurrentWeather = getCurrentDetails(jsonData);
+                            mHourlyWeatherList = getHourlyWeather(jsonData);
                             mDailyWeatherList = getDailyWeather(jsonData);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     updateDisplay();
+                                    mHourlyWeatherAdapter.loadNewData(mHourlyWeatherList);
                                     mDailyWeatherAdapter.loadNewData(mDailyWeatherList);
                                     getCityImage(mLocation.getLatitude(), mLocation.getLongitude());
                                 }
@@ -289,15 +306,42 @@ public class MainActivity extends ActionBarActivity implements LocationProvider.
         mIconImageView.setImageDrawable(drawable);
     }
 
+    private List<Weather> getHourlyWeather(String jsonData) throws JSONException {
+        List<Weather> weatherList = new ArrayList<Weather>();
+
+        JSONObject forecast = new JSONObject(jsonData);
+        String timezone = forecast.getString("timezone");
+
+        JSONObject daily = forecast.getJSONObject("hourly");
+        JSONArray dailyData = daily.getJSONArray("data");
+
+        JSONObject currently = forecast.getJSONObject("currently");
+
+        for (int i = 0; i < dailyData.length(); i++) {
+            JSONObject object = dailyData.getJSONObject(i);
+
+            long time = object.getLong("time");
+            if (time > currently.getLong("time")) {
+                Weather weather = new Weather();
+                weather.setTemperature(object.getDouble("temperature"));
+                weather.setIcon(object.getString("icon"));
+                weather.setTime(time);
+                weather.setTimeZone(timezone);
+                weatherList.add(weather);
+            }
+
+        }
+
+        return weatherList;
+    }
     private List<Weather> getDailyWeather(String jsonData) throws JSONException {
         List<Weather> weatherList = new ArrayList<Weather>();
 
         JSONObject forecast = new JSONObject(jsonData);
+        String timezone = forecast.getString("timezone");
 
         JSONObject daily = forecast.getJSONObject("daily");
         JSONArray dailyData = daily.getJSONArray("data");
-
-        Log.d(TAG, "daily data: " + dailyData.toString());
 
         for (int i = 0; i < WeatherConstants.NUMBER_OF_FUTURE_DAYS; i++) {
             JSONObject object = dailyData.getJSONObject(i);
@@ -307,7 +351,7 @@ public class MainActivity extends ActionBarActivity implements LocationProvider.
             weather.setTemperatureMax(object.getDouble("temperatureMax"));
             weather.setIcon(object.getString("icon"));
             weather.setTime(object.getLong("time"));
-
+            weather.setTimeZone(timezone);
             weatherList.add(weather);
         }
 

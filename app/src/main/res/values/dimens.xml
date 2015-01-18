@@ -3,4 +3,6 @@
     <dimen name="activity_horizontal_margin">32dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="dailyweather_list_item_row_height">45dp</dimen>
+    <dimen name="hourlyweather_list_item_row_height">80dp</dimen>
+    <dimen name="hourly_listView_height">100dp</dimen>
 </resources>

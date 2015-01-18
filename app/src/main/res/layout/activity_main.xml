@@ -75,16 +75,6 @@
                     android:src="@drawable/degree"/>
 
                 <TextView
-                    android:id="@+id/timeLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/locationLabel"
-                    android:layout_centerHorizontal="true"
-                    android:text="..."
-                    android:textColor="#80ffffff"
-                    android:textSize="18sp"/>
-
-                <TextView
                     android:id="@+id/locationLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -95,6 +85,16 @@
                     android:text="--"
                     android:textColor="@android:color/white"
                     android:textSize="24sp"/>
+
+                <TextView
+                    android:id="@+id/timeLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/locationLabel"
+                    android:layout_centerHorizontal="true"
+                    android:text="..."
+                    android:textColor="#80ffffff"
+                    android:textSize="18sp"/>
 
                 <ImageView
                     android:id="@+id/iconImageView"
@@ -192,10 +192,19 @@
                     android:textSize="16dp"/>
 
                 <android.support.v7.widget.RecyclerView
+                    android:id="@+id/hourlyList"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/hourly_listView_height"
+                    android:layout_below="@+id/enableLabel"
+                    android:layout_marginTop="30dp"
+                    android:scrollbars="horizontal"
+                    />
+
+                <android.support.v7.widget.RecyclerView
                     android:id="@+id/dailyList"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/enableLabel"
+                    android:layout_below="@+id/hourlyList"
                     android:layout_marginTop="30dp"
                     android:scrollbars="vertical"/>
 

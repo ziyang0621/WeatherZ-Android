@@ -102,7 +102,7 @@ public class Weather {
     }
 
     public String getFormattedTime() {
-        SimpleDateFormat formatter = new SimpleDateFormat("h:mm a");
+        DateFormat formatter = new SimpleDateFormat("h:mm a");
         formatter.setTimeZone(TimeZone.getTimeZone(getTimeZone()));
         Date dateTime = new Date(getTime() * 1000);
         String timeString = formatter.format(dateTime);
@@ -111,11 +111,15 @@ public class Weather {
     }
 
     public String getDayOfWeek() {
-//        Calendar c = Calendar.getInstance();
-//        c.setTime(new Date(getTime() * 1000));
-//        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-        DateFormat format = new SimpleDateFormat("EEEE");
-        return format.format(new Date(getTime() * 1000));
+        DateFormat formatter = new SimpleDateFormat("EEEE");
+        formatter.setTimeZone(TimeZone.getTimeZone(getTimeZone()));
+        return formatter.format(new Date(getTime() * 1000));
+    }
+
+    public String getHour() {
+        DateFormat formatter = new SimpleDateFormat("ha");
+        formatter.setTimeZone(TimeZone.getTimeZone(getTimeZone()));
+        return formatter.format(new Date(getTime() * 1000));
     }
 
     public void setTime(long time) {

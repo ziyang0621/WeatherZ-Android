@@ -11,28 +11,28 @@ import java.util.List;
 /**
  * Created by ziyang0621 on 1/16/15.
  */
-public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherViewHolder> {
+public class HourlyWeatherAdapter extends RecyclerView.Adapter<HourlyWeatherViewHolder> {
     private List<Weather> mWeatherList;
     private Context mContext;
 
-    public DailyWeatherAdapter(Context context, List<Weather> weatherList) {
+    public HourlyWeatherAdapter(Context context, List<Weather> weatherList) {
         mContext = context;
         mWeatherList = weatherList;
     }
 
     @Override
-    public DailyWeatherViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.dailyweather_list_item, parent, false);
-        DailyWeatherViewHolder dailyWeatherViewHolder = new DailyWeatherViewHolder(mContext, view);
-        return dailyWeatherViewHolder;
+    public HourlyWeatherViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.hourlyweather_list_item, parent, false);
+        HourlyWeatherViewHolder hourlyWeatherViewHolder = new HourlyWeatherViewHolder(mContext, view);
+        return hourlyWeatherViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(DailyWeatherViewHolder holder, int position) {
+    public void onBindViewHolder(HourlyWeatherViewHolder holder, int position) {
         Weather weather = mWeatherList.get(position);
-        holder.setDayLabel(weather.getDayOfWeek());
+        holder.setHourLabel(weather.getHour());
         holder.setIconImageView(weather.getIconId());
-        holder.setDegreeLabel(weather.getTemperatureMin() + " ~ " + weather.getTemperatureMax());
+        holder.setDegreeLabel(""+weather.getTemperature());
     }
 
     @Override
